@@ -1,0 +1,48 @@
+**CRITICAL INSTRUCTION: DO NOT REMOVE USER API KEY FUNCTIONALITY**
+This application is deployed on a public server. To avoid incurring costs on the owner's personal budget, users **MUST** provide their own Google AI API Key.
+- The **Settings Dialog** (`SettingsDialog.tsx`) is essential for users to enter and save their key.
+- The key is stored in the browser's **local storage**.
+- The app must be disabled and prompt the user for a key if one is not present.
+- This functionality is a hard requirement and must not be refactored out in favor of environment variables.
+
+---
+
+### Full Feature Checklist
+
+**Core Workflow (9 Pages):**
+1.  **Topic Page:** User enters a topic string and selects singers from a fixed list (Miranda, Annelies, Fannie, Emma).
+2.  **Language Page:** User selects a primary language. If more than one singer is chosen, a second language can be selected for bilingual output.
+3.  **Qualities Page:** User selects optional Mood, Genre, Pace, and Texture from dropdowns.
+    - **AI Feature #1 (Expand Topic):** A button uses Gemini to create a rich, detailed paragraph from the user's topic and selected qualities.
+    - **AI Feature #2 (Suggest Style):** The "Next" button uses Gemini to analyze the topic/qualities and suggest a suitable music style for the next page.
+4.  **Style Page:** User selects a music style from a list defined in `music-styles.json`. The AI's suggestion is pre-selected.
+5.  **Instruments Page:** User selects instruments via checkboxes, based on the chosen style. Common instruments are pre-selected by default. A "Copy" button formats the style and instruments for Suno.
+6.  **Lyrics Page:** Automatically generates content on first load if lyrics are missing.
+    - **AI Feature #3 (Generate Lyrics):** Uses Gemini to generate a song title and formatted lyrics based on all previous user input (topic, singers, languages, style, instruments, etc.).
+    - Features "Redo" buttons for regenerating title or lyrics independently.
+    - Features "Copy" buttons for title, formatted lyrics, and plain lyrics.
+7.  **Collection Page:** A central hub displaying all generated assets. The "View Report" and "Download All" buttons appear in the header on this page.
+8.  **Karaoke Page:** A simplified, large-font, read-only view of the lyrics for sing-alongs.
+9.  **Cover Image Page:** The final creative step.
+    - **AI Feature #4 (Generate Image Prompt):** Gemini creates a detailed prompt for an image based on the song's theme and singers.
+    - **AI Feature #5 (Generate Image):** Imagen uses the generated prompt to create cover art.
+    - Automatically generates 2 images on first load. Users can generate more, select a favorite for the collection, view the prompt, and download individual images. A skip option is available.
+
+**Dialogs & Modals:**
+- **Settings:** For API Key input.
+- **Console:** A log viewer for debugging Gemini and Imagen API calls. Allows filtering and saving logs.
+- **ToS:** Renders `tos.md`.
+- **About:** Renders markdown files about the creators with a tabbed interface.
+- **Manual:** Renders `manual.md`.
+- **Music Styles Explorer:** A detailed browser for all music styles and instruments from the JSON file.
+    - **AI Feature #6 (Generate Instrument Image):** Allows generating an image of a selected instrument.
+- **Report:** Displays a formatted HTML report of the final collection.
+- **Language:** A searchable dialog for selecting from a large list of languages.
+
+**Sidebars & Layout:**
+- **Left Sidebar:** Primary navigation for the 9-step workflow.
+- **Right Sidebar:** A contextual summary pane showing the current state of the song being created (topic, singers, style, etc.).
+
+**Data & Export:**
+- **State Persistence:** The entire application state is saved to the browser's local storage to persist across sessions.
+- **ZIP Export:** The "Download All" button on the Collection page creates a `.zip` file containing: `title.txt`, `lyrics.txt`, `style_and_instruments.txt`, `report.md`, `report.html`, and all generated cover art images as `.png` files.
